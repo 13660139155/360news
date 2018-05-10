@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar
+
+        android:id="@+id/tool_bar2"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@drawable/bg_shape"
+            android:layout_marginRight="18dp">
+
+            <ImageView
+                android:id="@+id/image_view_image_search2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/search2"/>
+
+            <EditText
+                android:id="@+id/edit_view_edit2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:background="@null"
+                android:layout_gravity="center"
+                android:hint="请输入关键词"
+                android:focusable="true"
+                android:cursorVisible="true"
+                android:textColor="#1f1e1e"
+                android:textColorHint="#928c8c"/>
+
+
+            <ImageView
+                android:id="@+id/image_view_delete2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/error"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/linear_layout_search"
+        android:background="#9a9797" />
+
+</LinearLayout>

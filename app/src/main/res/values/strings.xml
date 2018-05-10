@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">360news</string>
+    <string name="app_name">洋葱新闻</string>
+    <string name="appwidget_text">收藏夹</string>
+    <string name="add_widget">Add widget</string>
 </resources>

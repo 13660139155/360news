@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/item_life"
+            android:title="生活"/>
+
+        <item
+            android:id="@+id/item_car"
+            android:title="汽车"/>
+
+        <item
+            android:id="@+id/item_newLife"
+            android:title="新时代"/>
+
+        <item
+            android:id="@+id/item_science"
+            android:title="科技"/>
+
+        <item
+            android:id="@+id/item_entertainment"
+            android:title="娱乐"/>
+        <item
+            android:id="@+id/item_sport"
+            android:title="运动"/>
+
+        <item
+            android:id="@+id/item_finance"
+            android:title="财经"/>
+
+        <item
+            android:id="@+id/item_NBA"
+            android:title="NBA"/>
+
+        <item
+            android:id="@+id/item_military"
+            android:title="军事"/>
+
+        <item
+            android:id="@+id/item_internatonal"
+            android:title="国际"/>
+
+        <item
+            android:id="@+id/item_film"
+            android:title="电影"/>
+
+
+        <item
+            android:id="@+id/item_tiyu"
+            android:title="体育"/>
+
+        <item
+            android:id="@+id/item_game"
+            android:title="游戏"/>
+
+        <item
+            android:id="@+id/item_society"
+            android:title="社会"/>
+
+        <item
+            android:id="@+id/item_fashion"
+            android:title="时尚"/>
+
+    </group>
+
+</menu>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/linear_layout_search">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar1"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="35dp"
+             android:layout_marginRight="10dp"
+             android:background="@drawable/bg_shape">
+
+
+            <ImageView
+                android:id="@+id/image_view_image_search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/search2"/>
+
+            <EditText
+                android:id="@+id/edit_view_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:hint="今日要闻："
+                android:textSize="15sp"
+                android:textColor="#1f1e1e"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:background="@null"
+                android:textColorHint="#928c8c" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+</LinearLayout>
+
