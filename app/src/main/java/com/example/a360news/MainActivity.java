@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         View.OnClickListener,
         TextWatcher{
 
-    public static boolean IS_NETWORK_AVAILABLE;//是否有网络
+    public static boolean IS_NETWORK_AVAILABLE = true;//是否有网络
     private IntentFilter intentFilter;
     private NetworkChangeReceiver networkChangeReceiver;
     private static final String TAG = "MainActivity";
@@ -191,8 +191,8 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.image_view_tab_news_selected:
-                actionBar.show();
                 replaceFragment(new NewsFragment());
+                actionBar.show();
                 imageViewTabNews.setImageResource(R.drawable.tab_news_selected);
                 imageViewTabMine.setImageResource(R.drawable.tab_mine);
                 break;

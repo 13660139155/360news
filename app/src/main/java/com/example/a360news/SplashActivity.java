@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGHT = 3000; // 延迟六秒
+    private final int SPLASH_DISPLAY_LENGHT = 3000; // 延迟3秒
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

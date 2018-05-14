@@ -34,6 +34,8 @@ import com.example.a360news.unit.HttpUnit;
 import com.example.a360news.unit.JSONUnit;
 import com.example.a360news.unit.Unitity;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +56,7 @@ public class NewsFragment extends Fragment implements
 
     private ProgressDialog progressDialog;
     private int lastVisibleItem;//新闻列表的最后一项
+    private int i = 0;
 
     @Nullable
     @Override
@@ -70,17 +73,19 @@ public class NewsFragment extends Fragment implements
             Temp.IS_STARTACTIVITY = 0;
             if(MainActivity.IS_NETWORK_AVAILABLE){
                 showProgressDialog(getActivity());
+                ArrayList<Data> dataList2 = SPFDatabase.extractData("data");//新闻数据数据
+                showNewsFormDatabase(dataList2);
                 setVerticalDataList();
             }else{
-                ArrayList<Data> dataList2 = SPFDatabase.extractData("data");//新闻数据数据
-                if(dataList2 != null){
-                    showNewsFormDatabase(dataList2);
+                ArrayList<Data> dataList3 = SPFDatabase.extractData("data");//新闻数据数据
+                if(dataList3.size() != 0){
+                    showNewsFormDatabase(dataList3);
                 }
             }
         }else {
-            ArrayList<Data> dataList2 = SPFDatabase.extractData("data");//新闻数据数据
-            if(dataList2 != null){
-                showNewsFormDatabase(dataList2);
+            ArrayList<Data> dataList4 = SPFDatabase.extractData("data");//新闻数据数据
+            if(dataList4 != null){
+                showNewsFormDatabase(dataList4);
             }
         }
 
@@ -111,10 +116,8 @@ public class NewsFragment extends Fragment implements
      */
     @Override
     public void onRefresh() {
-        String[] keyWords = {"%E8%A6%81%E9%97%BB", "%E5%A4%B4%E6%9D%A1", "%E7%83%AD%E7%82%B9", "%E6%96%B0%E9%97%BB", "%E8%85%BE%E8%AE%AF"};
-        String keyWord = keyWords[(int)(Math.random()*10)%5];
+        String keyWord = returnKey();
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + keyWord + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
-       // String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&uid=5816621612_5816621612&contentType=1&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
         HttpUnit.sendHttpRequest(address, new HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
@@ -166,10 +169,8 @@ public class NewsFragment extends Fragment implements
      * 刷新新闻数据
      */
     private void refreshNewsData() {
-        String[] keyWords = {"%E8%A6%81%E9%97%BB", "%E5%A4%B4%E6%9D%A1", "%E7%83%AD%E7%82%B9", "%E6%96%B0%E9%97%BB", "%E8%85%BE%E8%AE%AF"};
-        String keyWord = keyWords[(int) (Math.random() * 10) % 5];
+        String keyWord = returnKey();
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + keyWord + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
-       // String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&uid=5816621612_5816621612&contentType=1&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
         HttpUnit.sendHttpRequest(address, new HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
@@ -226,10 +227,8 @@ public class NewsFragment extends Fragment implements
      * 设置纵向新闻列表滚动
      */
     public void setVerticalDataList(){
-        String[] keyWords = {"%E8%A6%81%E9%97%BB", "%E5%A4%B4%E6%9D%A1", "%E7%83%AD%E7%82%B9", "%E6%96%B0%E9%97%BB", "%E8%85%BE%E8%AE%AF"};
-        String keyWord = keyWords[(int)(Math.random()*10)%5];
+        String keyWord = returnKey();
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + keyWord + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
-        //String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&uid=5816621612_5816621612&contentType=1&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
         /* 初始化dataList */
         /* 请求api */
         HttpUnit.sendHttpRequest(address,
@@ -245,12 +244,9 @@ public class NewsFragment extends Fragment implements
                         public void run() {
                             dataList = JSONUnit.praseNewsResponse(response);
                             if(dataList.size() != 0){
-                                dataRecyclerAdapter = new DataRecyclerAdapter(dataList);
-                                linearLayoutManager = new LinearLayoutManager(MyApplication.getContext());
-                                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                recyclerView.setLayoutManager(linearLayoutManager);
-                                recyclerView.setAdapter(dataRecyclerAdapter);
-                                Toast.makeText(getActivity(), "加载完成", Toast.LENGTH_SHORT).show();
+                                dataRecyclerAdapter.addItem(dataList);
+                                dataRecyclerAdapter.notifyDataSetChanged();
+                                Toast.makeText(getActivity(), "发现了" + dataList.size() + "条新闻", Toast.LENGTH_SHORT).show();
                             }else {
                                 Toast.makeText(getActivity(), "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
                             }
@@ -300,5 +296,33 @@ public class NewsFragment extends Fragment implements
             progressDialog.dismiss();
         }
     }
+
+    /**
+     * 返回关键不重复的关键字
+     */
+    public String returnKey(){
+        String[] keyWords = {"今日头条", "今日要闻", "今日资讯", "腾讯新闻", "新闻", "腾讯要闻", "头条", "腾讯资讯", "新浪新闻", "今日关注", "新浪要闻", "新闻最前线", "新浪资讯", "搜狐新闻", "新闻焦点", "搜狐要闻", "资讯", "搜狐资讯", "新闻快报", "新闻资讯", "要闻"};
+        if(i == 21){
+            i = 0;
+        }
+        String keyWord = keyWords[i];
+        i++;
+        String key = encode(keyWord);
+        return key;
+    }
+
+    /**
+     * 编码
+     */
+    private String encode(String string){
+        String str = new String();
+        try {
+            str = URLEncoder.encode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
 
 }

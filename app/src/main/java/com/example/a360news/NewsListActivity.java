@@ -49,6 +49,7 @@ public class NewsListActivity extends AppCompatActivity
         AbsListView.OnScrollListener,
         TextWatcher{
 
+    private int i = 0;
     private static final String TAG = "NewsListActivity";
     private ArrayList dataList = new ArrayList<>();
     private View loadmoreView;
@@ -93,6 +94,10 @@ public class NewsListActivity extends AppCompatActivity
             if(MainActivity.IS_NETWORK_AVAILABLE){
                 int key = isFrist(keyWord);//如果是1表示在有网络的时候第一次进入，从网上加载数据，如果不是1则从缓存加载
                 if(key == 1){
+                    dataList = SPFDatabase.extractData(keyWord);//被缓存的新闻数据数据
+                    if(dataList.size() != 0){
+                        showNewsFormDatabase(dataList);
+                    }
                     setVerticalDataList(keyWord);
                 }else {
                     dataList = SPFDatabase.extractData(keyWord);//被缓存的新闻数据数据
@@ -107,7 +112,7 @@ public class NewsListActivity extends AppCompatActivity
                 }
             }
         }else {
-            setVerticalDataList(keyWord);
+            setSearchVerticalDataList(keyWord);
         }
         listView.setOnItemClickListener(this);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh_layout_list);
@@ -115,6 +120,47 @@ public class NewsListActivity extends AppCompatActivity
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
         swipeRefreshLayout.setOnRefreshListener(this);
         listView.setOnScrollListener(this);
+    }
+
+    /**
+     * 搜索列表
+     * @param keyWord
+     */
+    private void setSearchVerticalDataList(final String keyWord) {
+        String key = encode(keyWord);
+        String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + key + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
+        /* 初始化dataList */
+        /* 请求api */
+        HttpUnit.sendHttpRequest(address,
+                new HttpCallBackListener() {
+                    @Override
+                    public void onFinish(final String response) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dataList = JSONUnit.praseNewsResponse(response);
+                                if(dataList.size() != 0){
+                                    dataAdapter = new DataListAdapter(NewsListActivity.this, R.layout.data_item_layout, dataList);
+                                    listView.addFooterView(loadmoreView,null,false);//加入刷新布局
+                                    listView.setAdapter(dataAdapter);
+                                    Toast.makeText(NewsListActivity.this, "发现了" + dataList.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(NewsListActivity.this, "加载失败,换个关键词再试试", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(NewsListActivity.this, "加载失败...", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        e.printStackTrace();
+                    }
+                });
     }
 
     /**
@@ -126,6 +172,11 @@ public class NewsListActivity extends AppCompatActivity
         String word = keyWord;
         if(is == true){
             word = refreshLabel(keyWord);
+        }else {
+            for(int j = 0; j < i; j++){
+                word += word;
+            }
+            i++;
         }
         String key = encode(word);
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + key + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
@@ -204,6 +255,11 @@ public class NewsListActivity extends AppCompatActivity
         String word = keyWord;
         if(is == true){
             word = refreshLabel(keyWord);
+        }else {
+            for(int j = 0; j < i; j++){
+                word+=word;
+            }
+            i++;
         }
         String key = encode(word);
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + key + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
@@ -258,10 +314,9 @@ public class NewsListActivity extends AppCompatActivity
                 break;
             case R.id.image_view_image_search3:
                 if(editText3.getText().toString() != null){
-                    String text = editText3.getText().toString();
-                    intent.putExtra("keyWord", text);
-                    String key = encode(text);
-                    setVerticalDataList(key);
+                    String keyWord = editText3.getText().toString();
+                    intent.putExtra("keyWord", keyWord);
+                    setSearchVerticalDataList(keyWord);
                 }
                 break;
             case R.id.image_view_delete3:
@@ -309,12 +364,11 @@ public class NewsListActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                dataList = JSONUnit.praseNewsResponse(response);
-                                if(dataList.size() != 0){
-                                    dataAdapter = new DataListAdapter(NewsListActivity.this, R.layout.data_item_layout, dataList);
-                                    listView.addFooterView(loadmoreView,null,false);//加入刷新布局
-                                    listView.setAdapter(dataAdapter);
-                                    Toast.makeText(NewsListActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
+                                ArrayList<Data> dataList2 = JSONUnit.praseNewsResponse(response);
+                                if(dataList2.size() != 0){
+                                    dataAdapter.addItem(dataList2);
+                                    dataAdapter.notifyDataSetChanged();
+                                    Toast.makeText(NewsListActivity.this, "发现了" + dataList2.size() + "条新闻", Toast.LENGTH_SHORT).show();
                                 }else {
                                     Toast.makeText(NewsListActivity.this, "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
                                 }
@@ -370,63 +424,124 @@ public class NewsListActivity extends AppCompatActivity
         String[] words;
         switch(keyWord){
             case "生活":
-                words = new String[]{keyWord, "life", "品味生活"};
-                key = words[(int) (Math.random() * 10) % 3];
-                break;
+                words = new String[]{keyWord, "爱生活", "品味生活", "生活的含义", "谈生活", "活在当下", "今日新鲜事", "美好的生活", "一天的生活", "新生活", "热爱生活", "珍惜生活", "享受生活"};
+                if(Temp.q == words.length){
+                    Temp.q = 0;
+                }
+                key = words[Temp.q];
+                Temp.q++;
+               break;
             case "汽车":
-                words = new String[]{keyWord, "life", "品味生活"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱汽车", "汽车之家", "推荐汽车", "谈汽车", "汽车趣闻", "汽车那些事", "汽车之家", "汽车要闻", "如何保养汽车", "汽车迷", "汽车零件", "汽车保养", "汽车资讯"};
+                if(Temp.w == words.length){
+                    Temp.w = 0;
+                }
+                key = words[Temp.w];
+                Temp.w++;
                 break;
             case "新时代":
-                words = new String[]{keyWord, "newLife", "新世纪"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "人民新时代", "新世纪", "习近平谈世纪", "人民与新时代", "新时代的变化", "新世纪的生活", "谱写新天地", "翻天覆地地变化", "新时代的我们", "迈向新生活", "迈向新时代", "谈新时代"};
+                if(Temp.e == words.length){
+                    Temp.e = 0;
+                }
+                key = words[Temp.e];
+                Temp.e++;
                 break;
             case "科技":
-                words = new String[]{keyWord, "science", "科学"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱科学", "科学技术", "科学家们", "科学那些事", "科学新发现", "探索科学", "科学网", "环球科学", "科学研究", "走进科学", "科学新发现", "生活中的科学"};
+                if(Temp.r == words.length){
+                    Temp.r = 0;
+                }
+                key = words[Temp.r];
+                Temp.r++;
                 break;
             case "娱乐":
-                words = new String[]{keyWord, "entertainment", "娱乐前线"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱娱乐", "娱乐前线", "娱乐八卦", "娱乐频道", "搜狐娱乐", "娱乐新闻", "娱乐看点", "娱乐星天地", "娱乐圈", "娱乐资讯", "娱乐最前线", "娱乐明星"};
+                if(Temp.t == words.length){
+                    Temp.t = 0;
+                }
+                key = words[Temp.t];
+                Temp.t++;
                 break;
             case "运动":
-                words = new String[]{keyWord, "sport", "健身"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱运动", "运动那些事", "运动要注意什么", "健康运动", "运动减肥", "运动的好处", "跑步", "运动健身", "体育健身", "运动新闻", "运动资讯"};
+                if(Temp.y == words.length){
+                    Temp.y = 0;
+                }
+                key = words[Temp.y];
+                Temp.y++;
                 break;
             case "财经":
-                words = new String[]{keyWord, "finance", "经济"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "财经前线", "财经报", "财经频道", "今日财经", "财经网", "股票行情", "凤凰财经", "国际财经", "新浪财经", "专家解读财经", "财经资讯", "财经资讯"};
+                if(Temp.u == words.length){
+                    Temp.u = 0;
+                }
+                key = words[Temp.u];
+                Temp.u++;
                 break;
             case "NBA":
-                words = new String[]{keyWord, "nba", "NBA比赛"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "nba", "NBA比赛", "NBA球星", "NBA新闻", "NBA最前线", "NBA赛季", "NBA搜狐", "腾讯NBA", "NBA那些事", "NBA资讯", "nba资讯"};
+                if(Temp.i == words.length){
+                    Temp.i = 0;
+                }
+                key = words[Temp.i];
+                Temp.i++;
                 break;
             case "军事":
-                words = new String[]{keyWord, "military", "军人"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "军迷", "军人", "军事爱好者", "军事前沿", "军事报道", "军事纪实", "军事频道", "军事装备", "中国军事", "环球军事", "军事新闻", "军事资讯"};
+                if(Temp.o == words.length){
+                    Temp.o = 0;
+                }
+                key = words[Temp.o];
+                Temp.o++;
+                break;
             case "国际":
-                words = new String[]{keyWord, "internatonal", "国际事件"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "国际焦点", "国际事件", "国际新闻", "国际时讯", "国际贸易", "国际在线", "国际最新消息", "国际频道", "国际网", "国际资讯"};
+                if(Temp.p == words.length){
+                    Temp.p = 0;
+                }
+                key = words[Temp.p];
+                Temp.p++;
                 break;
             case "电影":
-                words = new String[]{keyWord, "film", "看电影"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱电影", "推荐电影", "电影新闻", "电影最前线", "电影迷", "电影爱好", "电影快讯", "腾讯电影新闻", "影视行业新闻", "电影资讯"};
+                if(Temp.a == words.length){
+                    Temp.a = 0;
+                }
+                key = words[Temp.a];
+                Temp.a++;
                 break;
             case "体育":
-                words = new String[]{keyWord, "体育前线", "体育比赛"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "体育前线", "体育比赛", "爱体育", "体育新闻", "新浪体育", "腾讯体育", "体育明星", "搜狐体育", "国际体育", "体育频道", "体育资讯"};
+                if(Temp.s == words.length){
+                    Temp.s = 0;
+                }
+                key = words[Temp.s];
+                Temp.s++;
                 break;
             case "游戏":
-                words = new String[]{keyWord, "game", "好玩的游戏"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱游戏", "推荐游戏", "游戏人生", "新浪游戏", "腾讯游戏", "搜狐游戏", "游戏新闻", "游戏频道", "游戏资讯", "打游戏", "玩游戏"};
+                if(Temp.d == words.length){
+                    Temp.d = 0;
+                }
+                key = words[Temp.d];
+                Temp.d++;
                 break;
             case "时尚":
-                words = new String[]{keyWord, "fashion", "时尚生活"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "爱时尚", "时尚生活", "时尚芭莎", "时尚新闻", "时尚潮流", "时尚频道", "时尚穿搭", "环球时尚", "腾讯时尚", "时尚资讯"};
+                if(Temp.f == words.length){
+                    Temp.f =0;
+                }
+                key = words[Temp.f];
+                Temp.f++;
                 break;
             case "社会":
-                words = new String[]{keyWord, "society", "社会焦点"};
-                key = words[(int) (Math.random() * 10) % 3];
+                words = new String[]{keyWord, "社会热点", "社会焦点", "社会新闻", "社会热点新闻", "社会资讯", "社会频道", "社会事件", "中新社会", "民生社会", "社会访谈", "社会民生"};
+                if(Temp.g == words.length){
+                    Temp.g = 0;
+                }
+                key = words[Temp.g];
+                Temp.g++;
                 break;
             default:
                 break;
@@ -477,7 +592,6 @@ public class NewsListActivity extends AppCompatActivity
         loadmoreView.setVisibility(View.GONE);//设置刷新界面不可见
         isLoading = false;//设置正在刷新标志位false
         NewsListActivity.this.invalidateOptionsMenu();
-        //listView.removeFooterView(loadmoreView);//如果是最后一页的话，则将其从ListView中移出
     }
 
     @Override
@@ -500,6 +614,7 @@ public class NewsListActivity extends AppCompatActivity
      */
     public void showNewsFormDatabase(List<Data> datas){
         dataAdapter = new DataListAdapter(NewsListActivity.this, R.layout.data_item_layout, datas);
+        listView.addFooterView(loadmoreView,null,false);//加入刷新布局
         listView.setAdapter(dataAdapter);
     }
 

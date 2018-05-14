@@ -21,7 +21,7 @@ public class Temp {
     /**
      * 图片id的维护表
      */
-    public  static ArrayList<String> imageUrl = new ArrayList<>();
+    public static ArrayList<String> imageUrl = new ArrayList<>();
 
     /**
      * 缓存被收藏的图片
@@ -60,4 +60,21 @@ public class Temp {
     public static int SPORT =1;
     public static int FASHION = 1;
     public static int TIYU = 1;
+
+    public static int q = 0;
+    public static int w = 0;
+    public static int e = 0;
+    public static int r = 0;
+    public static int t = 0;
+    public static int y = 0;
+    public static int u = 0;
+    public static int i = 0;
+    public static int o = 0;
+    public static int p = 0;
+    public static int a = 0;
+    public static int s = 0;
+    public static int d = 0;
+    public static int f = 0;
+    public static int g = 0;
+
 }
