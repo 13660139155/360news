@@ -72,8 +72,9 @@
 
                 <ImageView
                     android:id="@+id/image_view_news_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
                     android:layout_centerInParent="true" />
 

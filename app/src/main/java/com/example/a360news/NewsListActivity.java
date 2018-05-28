@@ -64,6 +64,7 @@ public class NewsListActivity extends AppCompatActivity
     DataListAdapter dataAdapter;
     Boolean isLoading = false;//表示是否正处于加载状态
     boolean is;
+    int isFirst;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +93,8 @@ public class NewsListActivity extends AppCompatActivity
         is = isLabel(keyWord);//判断是不是标签
         if(is == true){
             if(MainActivity.IS_NETWORK_AVAILABLE){
-                int key = isFrist(keyWord);//如果是1表示在有网络的时候第一次进入，从网上加载数据，如果不是1则从缓存加载
-                if(key == 1){
+                isFirst = isFrist(keyWord);//如果是1表示在有网络的时候第一次进入，从网上加载数据，如果不是1则从缓存加载
+                if(isFirst == 1){
                     dataList = SPFDatabase.extractData(keyWord);//被缓存的新闻数据数据
                     if(dataList.size() != 0){
                         showNewsFormDatabase(dataList);
@@ -261,7 +262,7 @@ public class NewsListActivity extends AppCompatActivity
             }
             i++;
         }
-        String key = encode(word);
+        final String key = encode(word);
         String address = "http://120.76.205.241:8000/news/toutiao?pageToken=0&kw=" + key + "&apikey=XdRGP2cPPTxE6WRTssnh4jC7HJLcSdevBsgnYowEbnS321J7QzZBBg6OZe6ATiIu";
         /* 初始化dataList */
         /* 请求api */
@@ -365,12 +366,18 @@ public class NewsListActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 ArrayList<Data> dataList2 = JSONUnit.praseNewsResponse(response);
-                                if(dataList2.size() != 0){
-                                    dataAdapter.addItem(dataList2);
-                                    dataAdapter.notifyDataSetChanged();
-                                    Toast.makeText(NewsListActivity.this, "发现了" + dataList2.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                if(isFirst == 1){
+                                    dataAdapter = new DataListAdapter(NewsListActivity.this, R.layout.data_item_layout, dataList2);
+                                    listView.addFooterView(loadmoreView,null,false);//加入刷新布局
+                                    listView.setAdapter(dataAdapter);
                                 }else {
-                                    Toast.makeText(NewsListActivity.this, "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
+                                    if(dataList2.size() != 0){
+                                        dataAdapter.addItem(dataList2);
+                                        dataAdapter.notifyDataSetChanged();
+                                        Toast.makeText(NewsListActivity.this, "发现了" + dataList2.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        Toast.makeText(NewsListActivity.this, "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }
                         });

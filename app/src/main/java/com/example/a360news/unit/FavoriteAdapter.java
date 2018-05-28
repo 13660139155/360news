@@ -38,6 +38,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public FavoriteAdapter(ArrayList<Data> arrayList, TreeMap<String, Bitmap> treeMapBitmap){
         this.arrayList = arrayList;
         this.treeMapBitmap = treeMapBitmap;
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

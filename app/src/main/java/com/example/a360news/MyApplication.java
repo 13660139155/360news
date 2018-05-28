@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 /**
+ * 全局content
  * Created by asus on 2018/4/24.
  */
 

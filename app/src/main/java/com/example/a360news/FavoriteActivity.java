@@ -38,6 +38,7 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
     LinearLayoutManager linearLayoutManager;
     RelativeLayout relativeLayout;
     SQLDatabase sqlDatabase;
+    TextView textViewHasFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
         textViewCompile = (TextView)findViewById(R.id.text_view_compile);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view_favorite);
         relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout_delete);
+        textViewHasFavorite = (TextView)findViewById(R.id.text_has_favorite);
         imageViewBack.setOnClickListener(this);
         textViewCompile.setOnClickListener(this);
         textViewCompile.setTag(false);
@@ -56,15 +58,10 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
         Temp.dataListId = quryFromSQL("NewsId", "newsId");
         Temp.imageUrl = quryFromSQL("ImageUrl", "imageUrl");
 
-        /** 判断是否隐藏编辑控件 */
-        if(Temp.dataListId.size() == 0){
-            textViewCompile.setVisibility(View.INVISIBLE);
-        }else {
-            textViewCompile.setVisibility(View.VISIBLE);
-        }
-
         /* 从缓存获得收藏 */
         if(Temp.treeMapData.size() != 0){
+            textViewHasFavorite.setVisibility(View.GONE);
+            textViewCompile.setVisibility(View.VISIBLE);
             linearLayoutManager = new LinearLayoutManager(this);
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(linearLayoutManager);
@@ -74,6 +71,8 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
             favoriteAdapter = new FavoriteAdapter(arrayList, Temp.treeMapBitmap);
             recyclerView.setAdapter(favoriteAdapter);
         }else if(Temp.dataListId.size() != 0){/* 从本地获得收藏 */
+            textViewHasFavorite.setVisibility(View.GONE);
+            textViewCompile.setVisibility(View.VISIBLE);
             linearLayoutManager = new LinearLayoutManager(this);
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(linearLayoutManager);
@@ -94,7 +93,11 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
             }
             favoriteAdapter = new FavoriteAdapter(arrayList, Temp.treeMapBitmap);
             recyclerView.setAdapter(favoriteAdapter);
+        }else { /** 判断是否隐藏编辑控件 */
+            textViewHasFavorite.setVisibility(View.VISIBLE);
+            textViewCompile.setVisibility(View.INVISIBLE);
         }
+
     }
 
     /**
