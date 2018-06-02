@@ -1,4 +1,4 @@
-package com.example.a360news.unit;
+package com.example.a360news.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,6 +20,8 @@ import com.example.a360news.R;
 import com.example.a360news.db.FileDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
+import com.example.a360news.unit.HttpUnit;
+import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
 import java.util.List;

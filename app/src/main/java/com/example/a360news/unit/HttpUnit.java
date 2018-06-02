@@ -3,6 +3,8 @@ package com.example.a360news.unit;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.example.a360news.interfance.HttpCallBackListener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

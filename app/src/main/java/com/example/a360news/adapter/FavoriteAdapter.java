@@ -1,4 +1,4 @@
-package com.example.a360news.unit;
+package com.example.a360news.adapter;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.a360news.FavoriteActivity;
-import com.example.a360news.MainActivity;
 import com.example.a360news.MyApplication;
 import com.example.a360news.NewsDataActivity;
 import com.example.a360news.R;
@@ -19,9 +17,9 @@ import com.example.a360news.db.FileDatabase;
 import com.example.a360news.db.SQLDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
+import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 /**

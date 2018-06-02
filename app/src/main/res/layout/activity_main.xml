@@ -6,41 +6,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include layout="@layout/search_layout"/>
 
-        <View
-            android:id="@+id/view2"
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/linear_layout_search"
-            android:background="#9a9797" />
-
-        <FrameLayout
-            android:id="@+id/fragment_layout"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg"
-            android:layout_below="@+id/view2"
-            android:layout_above="@+id/linear_layout_end">
+            android:background="#fff"
+            app:tabIndicatorColor="#000"/>
 
-        </FrameLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
 
-        <include layout="@layout/end_layout"/>
+        </android.support.v4.view.ViewPager>
 
-    </RelativeLayout>
-
+    </LinearLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        app:itemTextColor="#000000"
-        app:menu="@menu/nav_menu"
+        app:menu="@menu/nav_item_menu"
         app:headerLayout="@layout/nav_header_layout"/>
 
 </android.support.v4.widget.DrawerLayout>

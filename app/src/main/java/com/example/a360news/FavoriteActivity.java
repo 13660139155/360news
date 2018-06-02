@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.provider.CalendarContract;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,14 +18,10 @@ import com.example.a360news.db.FileDatabase;
 import com.example.a360news.db.SQLDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
-import com.example.a360news.unit.FavoriteAdapter;
+import com.example.a360news.adapter.FavoriteAdapter;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
-
-import static com.example.a360news.MainActivity.IS_NETWORK_AVAILABLE;
 
 public class FavoriteActivity extends AppCompatActivity implements View.OnClickListener{
 

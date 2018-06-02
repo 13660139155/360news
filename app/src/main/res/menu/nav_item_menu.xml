@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_keep"
+        android:title="收藏夹"
+        android:icon="@drawable/keep48"/>
+
+</menu>

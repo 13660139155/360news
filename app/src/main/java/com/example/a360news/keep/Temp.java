@@ -38,29 +38,10 @@ public class Temp {
      */
     public static TreeMap<String, Data> treeMapData = new TreeMap();
 
-    /** 是否第一次启动主活动,默认是 */
-    public static int IS_STARTACTIVITY = 1;
-
     /** 是否是收藏夹启动新闻数据页活动*/
     public static int IS_DATAACTIVITY;
 
-    /** 判断标签是否第一次进入， 默认是 */
-    public static int LIFE = 1;
-    public static int ENTERTAINMENT = 1;
-    public static int FILM = 1;
-    public static int FINANCE = 1;
-    public static int GAME = 1;
-    public static int INTERNATIONAL = 1;
-    public static int MILITARY = 1;
-    public static int NBA = 1;
-    public static int NEWLIFE = 1;
-    public static int SCIENCE = 1;
-    public static int CAR = 1;
-    public static int SOCIETY = 1;
-    public static int SPORT =1;
-    public static int FASHION = 1;
-    public static int TIYU = 1;
-
+    public static int h = 0;
     public static int q = 0;
     public static int w = 0;
     public static int e = 0;

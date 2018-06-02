@@ -6,44 +6,31 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a360news.Fragment.MineFragment;
 import com.example.a360news.Fragment.NewsFragment;
-import com.example.a360news.db.FileDatabase;
-import com.example.a360news.db.SPFDatabase;
-import com.example.a360news.json.Data;
-import com.example.a360news.json.Label;
-import com.example.a360news.keep.Temp;
+import com.example.a360news.adapter.FragmentAdapter;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
-
-import static com.example.a360news.MainActivity.IS_NETWORK_AVAILABLE;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -54,6 +41,10 @@ public class MainActivity extends AppCompatActivity
     private IntentFilter intentFilter;
     private NetworkChangeReceiver networkChangeReceiver;
     private static final String TAG = "MainActivity";
+    private FragmentAdapter fragmentAdapter;
+    private ArrayList<Fragment> fragmentArrayList;//页面
+    private String[] titles;
+    private ArrayList<String> titleArrayList;//标题
     DrawerLayout drawerLayout;//滑动菜单
     NavigationView navigationView;//左菜单
     ActionBar actionBar;
@@ -62,8 +53,8 @@ public class MainActivity extends AppCompatActivity
     EditText navEditText;
     ImageView navSearch;
     ImageView imageViewDelete;//输入框内的删除键
-    ImageView imageViewTabNews;
-    ImageView imageViewTabMine;
+    ViewPager viewPager;
+    TabLayout tabLayout;
 
     @Override
     protected void onDestroy() {
@@ -74,19 +65,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        networkChangeReceiver = new NetworkChangeReceiver();
+        registerReceiver(networkChangeReceiver, intentFilter);
         setContentView(R.layout.activity_main);
+
         toolbarMain = (Toolbar)findViewById(R.id.tool_bar1);
         drawerLayout = (DrawerLayout)findViewById(R.id.draw_layout);
         navigationView = (NavigationView)findViewById(R.id.navigation_view);
         editText = (EditText)findViewById(R.id.edit_view_edit);
-        imageViewTabMine = (ImageView)findViewById(R.id.image_view_tab_mine);
-        imageViewTabNews = (ImageView)findViewById(R.id.image_view_tab_news_selected);
         navEditText = (EditText)findViewById(R.id.edit_view_edit2);
         navSearch = (ImageView)findViewById(R.id.image_view_image_search2);
         imageViewDelete = (ImageView)findViewById(R.id.image_view_delete2);
-        intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        networkChangeReceiver = new NetworkChangeReceiver();
+        viewPager = (ViewPager)findViewById(R.id.view_pager);
+        tabLayout = (TabLayout)findViewById(R.id.tab_layout);
 
         editText.setOnClickListener(this);
         navSearch.setOnClickListener(this);
@@ -100,10 +93,23 @@ public class MainActivity extends AppCompatActivity
             actionBar.setHomeAsUpIndicator(R.drawable.atm);
         }
         navigationView.setNavigationItemSelectedListener(this);
-        imageViewTabMine.setOnClickListener(this);
-        imageViewTabNews.setOnClickListener(this);
-        registerReceiver(networkChangeReceiver, intentFilter);
-        replaceFragment(new NewsFragment());
+
+        fragmentArrayList = new ArrayList<>();
+        titleArrayList = new ArrayList<>();
+        titles = new String[]{"要闻", "生活", "汽车", "新时代", "科技", "娱乐", "运动", "财经", "NBA", "军事", "国际", "电影", "体育", "游戏", "社会", "时尚"};
+        for(int i = 0; i < titles.length; i++){
+            fragmentArrayList.add(NewsFragment.newFragment(titles[i]));
+            titleArrayList.add(titles[i]);
+            tabLayout.addTab(tabLayout.newTab().setText(titles[i]));
+        }
+        fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), fragmentArrayList, titleArrayList);
+        viewPager.setAdapter(fragmentAdapter);
+        tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来
+        tabLayout.setTabsFromPagerAdapter(fragmentAdapter);//给Tabs设置适配器
+        //MODE_SCROLLABLE可滑动的展示
+        //MODE_FIXED固定展示
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        viewPager.setOffscreenPageLimit(15);//预加载页数
     }
 
     /**
@@ -126,51 +132,10 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        switch ((menuItem.getItemId())){
-            case R.id.item_entertainment:
-               NewsListActivity.actionStart(MainActivity.this, "娱乐");
+        switch (menuItem.getItemId()){
+            case R.id.item_keep:
+                FavoriteActivity.actionStart(MainActivity.this);
                 break;
-            case R.id.item_film:
-                NewsListActivity.actionStart(MainActivity.this, "电影");
-                break;
-            case R.id.item_finance:
-                NewsListActivity.actionStart(MainActivity.this, "财经");
-                break;
-            case R.id.item_game:
-                NewsListActivity.actionStart(MainActivity.this, "游戏");
-                break;
-            case R.id.item_internatonal:
-                NewsListActivity.actionStart(MainActivity.this, "国际");
-                break;
-            case R.id.item_life:
-                NewsListActivity.actionStart(MainActivity.this, "生活");
-                break;
-            case R.id.item_military:
-                NewsListActivity.actionStart(MainActivity.this, "军事");
-                break;
-            case R.id.item_NBA:
-                NewsListActivity.actionStart(MainActivity.this, "NBA");
-                break;
-            case R.id.item_newLife:
-                NewsListActivity.actionStart(MainActivity.this,  "新时代");
-                break;
-            case R.id.item_science:
-                NewsListActivity.actionStart(MainActivity.this,  "科技");
-                break;
-            case R.id.item_car:
-                NewsListActivity.actionStart(MainActivity.this,  "汽车");
-                break;
-            case R.id.item_society:
-                NewsListActivity.actionStart(MainActivity.this, "社会");
-                break;
-            case R.id.item_sport:
-                NewsListActivity.actionStart(MainActivity.this,  "运动");
-                break;
-            case R.id.item_fashion:
-                NewsListActivity.actionStart(MainActivity.this,  "时尚");
-                break;
-            case R.id.item_tiyu:
-                NewsListActivity.actionStart(MainActivity.this,  "体育");
             default:
                 break;
         }
@@ -190,18 +155,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.image_view_image_search:
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.image_view_tab_news_selected:
-                replaceFragment(new NewsFragment());
-                actionBar.show();
-                imageViewTabNews.setImageResource(R.drawable.tab_news_selected);
-                imageViewTabMine.setImageResource(R.drawable.tab_mine);
-                break;
-            case R.id.image_view_tab_mine:
-                replaceFragment(new MineFragment());
-                actionBar.hide();
-                imageViewTabMine.setImageResource(R.drawable.tab_mine_selected);
-                imageViewTabNews.setImageResource(R.drawable.tab_news);
-                break;
             case R.id.image_view_image_search2:
                 if(navEditText.getText().toString() != null){
                     NewsListActivity.actionStart(MainActivity.this, navEditText.getText().toString());
@@ -216,27 +169,6 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
-    }
-
-    /**
-     * 启动主活动
-     * @param context 上下文
-     */
-    public static void actionStart(Context context){
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
-    }
-
-    /**
-     * 动态添加碎片
-     * @param fragment
-     * t 要添加的碎片
-     */
-    public void replaceFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_layout, fragment);
-        fragmentTransaction.commit();
     }
 
     /** 文本改变前 */
