@@ -74,7 +74,7 @@ public class DataListAdapter extends ArrayAdapter<Data>{
             viewHolder.dataImageView.setImageResource(R.drawable.launch);
             viewHolder.dataImageView.setTag(url);
             Bitmap bitmap = treeMapBitmap.get(data.getNewsImageUrls().get(0));
-            Bitmap bitmap2 = Unitity.scaleImage(FileDatabase.loadBitmap(data.getNewsImageUrls().get(0)), 500, 350);
+            Bitmap bitmap2 = FileDatabase.loadBitmap(data.getNewsImageUrls().get(0));
             if(bitmap != null){
                 viewHolder.dataImageView.setImageBitmap(bitmap);
             }else if(bitmap2 != null) {

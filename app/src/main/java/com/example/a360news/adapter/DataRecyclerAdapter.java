@@ -96,11 +96,10 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((ViewHolder)holder).dataImageView.setTag(url);
             Bitmap bitmap = treeMapBitmap.get(data.getNewsImageUrls().get(0));
             Bitmap bitmap1 = FileDatabase.loadBitmap(data.getNewsImageUrls().get(0));
-            Bitmap bitmap2 = Unitity.scaleImage(bitmap1, 500, 350);
             if(bitmap != null){
                 ((ViewHolder)holder).dataImageView.setImageBitmap(bitmap);
-            }else if (bitmap2 != null){
-                ((ViewHolder)holder).dataImageView.setImageBitmap(bitmap2);
+            }else if (bitmap1 != null){
+                ((ViewHolder)holder).dataImageView.setImageBitmap(bitmap1);
             } else{
                 new AsyncTask<String, Integer, Bitmap>() {
 

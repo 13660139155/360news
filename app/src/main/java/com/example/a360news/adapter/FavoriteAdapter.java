@@ -77,18 +77,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                     Temp.treeMapBitmap.remove(data.getNewsImageUrls().get(0));
                     deleteFromSQL("NewsId", "newsId == ?", data.getNewsId());
                     deleteFromSQL("ImageUrl", "imageUrl == ?", data.getNewsImageUrls().get(0));
-                    int imageUrlSize = Temp.imageUrl.size();
-                    for (int i = 0; i < imageUrlSize; i++){
-                        if(Temp.imageUrl.get(i).compareTo(data.getNewsImageUrls().get(0)) == 0){
-                            Temp.imageUrl.remove(i);
-                        }
-                    }
-                    int dataListId = Temp.dataListId.size();
-                    for(int i = 0;i < dataListId; i++){
-                        if(Temp.dataListId.get(i).compareTo(data.getNewsId()) == 0){
-                            Temp.dataListId.remove(i);
-                        }
-                    }
+                    Temp.imageUrl.remove(data.getNewsImageUrls().get(0));
+                    Temp.dataListId.remove(data.getNewsId());
                     FileDatabase.deleteData(data.getNewsId());
                     FileDatabase.deleteBitmap(data.getNewsImageUrls().get(0));
                 }
@@ -121,8 +111,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         Bitmap bitmap = treeMapBitmap.get(data.getNewsImageUrls().get(0));
         holder.dataImageView.setImageResource(R.drawable.launch);
         if(bitmap != null){
-            Bitmap newBitmap = Unitity.scaleImage(bitmap, 500, 350);
-            holder.dataImageView.setImageBitmap(newBitmap);
+            holder.dataImageView.setImageBitmap(bitmap);
         }
     }
 

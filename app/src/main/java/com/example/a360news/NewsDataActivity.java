@@ -13,14 +13,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,7 @@ import com.example.a360news.db.SQLDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
 import com.example.a360news.unit.HttpUnit;
+import com.example.a360news.unit.MyPopupWindow;
 import com.example.a360news.unit.Unitity;
 
 import java.io.File;
@@ -53,8 +58,12 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
     ImageView imageViewImage;
     Data data;
     Bitmap bitmap;
+    ImageView imageViewPoint;
     /* 数据库 */
     SQLDatabase sqlDatabase;
+
+    private PopupMenu popupMenu;
+    private MyPopupWindow myPopupWindow;//弹出框
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +78,10 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
         textViewDate = (TextView)findViewById(R.id.text_view_news_date);
         textViewTitle = (TextView)findViewById(R.id.text_view_news_title);
         imageViewImage = (ImageView)findViewById(R.id.image_view_data_image);
+        imageViewPoint = (ImageView)findViewById(R.id.image_view_point);
+
         imageViewBack2.setOnClickListener(this);
+        imageViewPoint.setOnClickListener(this);
         sqlDatabase = new SQLDatabase(NewsDataActivity.this, "Store", null, 1);
         setSupportActionBar(toolbarData);
         Intent intent = getIntent();
@@ -77,72 +89,124 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
         showNews(data);
     }
 
-    /**
-     * 加载菜单选项
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.news_data_menu, menu);
-        return true;
-    }
-
-    /**
-     * 菜单选项的点击事件
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
-            case R.id.item_preserve:
-                if(data != null && bitmap != null){
-                    Temp.treeMapBitmap.put(data.getNewsImageUrls().get(0), bitmap);
-                    insertInSQL("ImageUrl", "imageUrl", data.getNewsImageUrls().get(0));
-                    FileDatabase.saveBitmap(data.getNewsImageUrls().get(0), bitmap);
-                }
-                if(data != null){
-                    Temp.treeMapData.put(data.getNewsId(), data);
-                    insertInSQL("NewsId", "newsId", data.getNewsId());
-                    FileDatabase.saveInFile(data, data.getNewsId());
-                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
-                }
-
-                break;
-            case R.id.item_shared:
-                Intent intent = new Intent(Intent.ACTION_SEND);
-//                String newURl = data.getNewsImageUrls().get(0).replace("/", "");
-//                File file = new File(MyApplication.getContext().getFilesDir(), newURl);
-//                if(file != null && file.exists()) {
-//                    intent.setType("image/*");
-//                    //由文件得到路径
-//                    Uri uri = Uri.fromFile(file);
-//                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-//                }else{
-//                    intent.setType("text/plain");
+//    /**
+//     * 加载菜单选项
+//     * @param menu
+//     * @return
+//     */
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.news_data_menu, menu);
+//        return true;
+//    }
+//
+//    /**
+//     * 菜单选项的点击事件
+//     * @param item
+//     * @return
+//     */
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item){
+//        switch(item.getItemId()){
+//            case R.id.item_preserve:
+//                if(data != null && bitmap != null){
+//                    Temp.treeMapBitmap.put(data.getNewsImageUrls().get(0), bitmap);
+//                    insertInSQL("ImageUrl", "imageUrl", data.getNewsImageUrls().get(0));
+//                    FileDatabase.saveBitmap(data.getNewsImageUrls().get(0), bitmap);
 //                }
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "我是标题");
-                intent.putExtra(Intent.EXTRA_TEXT,  data.getNewsTitle() + "\n\n"
-                                                    + data.getNewsPublishDataStr() + "\n"
-                                                    + "编辑：" + data.getNewsPublisher() + "\n\n"
-                                                    + data.getNewsContent()
-                                                    + data.getNewsUrl());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(Intent.createChooser(intent, "分享到"));
-                break;
-            default:
-                break;
-        }
-       return true;
-    }
+//                if(data != null){
+//                    Temp.treeMapData.put(data.getNewsId(), data);
+//                    insertInSQL("NewsId", "newsId", data.getNewsId());
+//                    FileDatabase.saveInFile(data, data.getNewsId());
+//                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                break;
+//            case R.id.item_shared:
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+////                String newURl = data.getNewsImageUrls().get(0).replace("/", "");
+////                File file = new File(MyApplication.getContext().getFilesDir(), newURl);
+////                if(file != null && file.exists()) {
+////                    intent.setType("image/*");
+////                    //由文件得到路径
+////                    Uri uri = Uri.fromFile(file);
+////                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+////                }else{
+////                    intent.setType("text/plain");
+////                }
+//                intent.setType("text/plain");
+//                intent.putExtra(Intent.EXTRA_SUBJECT, "我是标题");
+//                intent.putExtra(Intent.EXTRA_TEXT,  data.getNewsTitle() + "\n\n"
+//                                                    + data.getNewsPublishDataStr() + "\n"
+//                                                    + "编辑：" + data.getNewsPublisher() + "\n\n"
+//                                                    + data.getNewsContent()
+//                                                    + data.getNewsUrl());
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(Intent.createChooser(intent, "分享到"));
+//                break;
+//            default:
+//                break;
+//        }
+//       return true;
+//    }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.image_view_back2:
                 finish();
+                break;
+            case R.id.image_view_point:
+                myPopupWindow = new MyPopupWindow(NewsDataActivity.this, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch(v.getId()){
+                        case R.id.text_preserve:
+                            if(Temp.treeMapData.get(data.getNewsId()) == null){
+                                if(data != null && bitmap != null){
+                                    Temp.treeMapBitmap.put(data.getNewsImageUrls().get(0), bitmap);
+                                    insertInSQL("ImageUrl", "imageUrl", data.getNewsImageUrls().get(0));
+                                    FileDatabase.saveBitmap(data.getNewsImageUrls().get(0), bitmap);
+                                }
+                                if(data != null){
+                                    Temp.treeMapData.put(data.getNewsId(), data);
+                                    insertInSQL("NewsId", "newsId", data.getNewsId());
+                                    FileDatabase.saveInFile(data, data.getNewsId());
+                                    Toast.makeText(NewsDataActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                                }
+                            }else {
+                                Toast.makeText(NewsDataActivity.this, "新闻已收藏过", Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case R.id.text_shared:
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+            //                String newURl = data.getNewsImageUrls().get(0).replace("/", "");
+            //                File file = new File(MyApplication.getContext().getFilesDir(), newURl);
+            //                if(file != null && file.exists()) {
+            //                    intent.setType("image/*");
+            //                    //由文件得到路径
+            //                    Uri uri = Uri.fromFile(file);
+            //                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+            //                }else{
+            //                    intent.setType("text/plain");
+            //                }
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_SUBJECT, "我是标题");
+                            intent.putExtra(Intent.EXTRA_TEXT,  data.getNewsTitle() + "\n\n"
+                                                                + data.getNewsPublishDataStr() + "\n"
+                                                                + "编辑：" + data.getNewsPublisher() + "\n\n"
+                                                                + data.getNewsContent()
+                                                                + data.getNewsUrl());
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(Intent.createChooser(intent, "分享到"));
+                            break;
+                        default:
+                            break;
+                        }
+                        myPopupWindow.dismiss();
+                    }
+                });
+                myPopupWindow.showOnView(imageViewPoint);
                 break;
             default:
                 break;
@@ -199,7 +263,6 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
     /**
      * 向数据库中插入数据
      * @param bookName 表名
@@ -223,5 +286,14 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
         Intent intent = new Intent(context, NewsDataActivity.class);
         intent.putExtra("data", data);
         context.startActivity(intent);
+    }
+
+    /**
+     * 改变背景透明度
+     */
+    private void changeBackgoundAlpha(float alpha){
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = alpha;
+        getWindow().setAttributes(lp);
     }
 }
