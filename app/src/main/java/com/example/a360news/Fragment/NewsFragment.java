@@ -3,9 +3,11 @@ package com.example.a360news.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -175,7 +177,7 @@ public class NewsFragment extends Fragment implements
                                 dataRecyclerAdapter.notifyDataSetChanged();
                             }
                             swipeRefreshLayout.setRefreshing(false);
-                            Toast.makeText(MyApplication.getContext(), "更新了" + dataList3.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(recyclerView, "更新了" + dataList3.size() + "条新闻", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -189,7 +191,7 @@ public class NewsFragment extends Fragment implements
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MyApplication.getContext(), "刷新失败", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(recyclerView, "更新了" + "刷新失败", Snackbar.LENGTH_SHORT).show();
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     });
@@ -218,11 +220,6 @@ public class NewsFragment extends Fragment implements
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         ArrayList<Data> dataList3 = JSONUnit.praseNewsResponse(response);
                         if (dataList3 != null) {
                             dataRecyclerAdapter.addMoreItem(dataList3);
@@ -230,7 +227,7 @@ public class NewsFragment extends Fragment implements
                             dataRecyclerAdapter.notifyDataSetChanged();
                         }
                         swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(MyApplication.getContext(), "更新了" + dataList3.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(recyclerView, "更新了" + dataList3.size() + "条新闻", Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -240,7 +237,7 @@ public class NewsFragment extends Fragment implements
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MyApplication.getContext(), "刷新失败", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(recyclerView, "刷新失败", Snackbar.LENGTH_SHORT).show();
                         dataRecyclerAdapter.changeMoreStatus(DataRecyclerAdapter.NO_MORE_DATA);
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -285,7 +282,7 @@ public class NewsFragment extends Fragment implements
                             if(dataList.size() != 0){
                                 dataRecyclerAdapter.addItem(dataList);
                                 dataRecyclerAdapter.notifyDataSetChanged();
-                                Toast.makeText(getActivity(), "发现了" + dataList.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(recyclerView, "发现了" + dataList.size() + "条新闻", Snackbar.LENGTH_SHORT);
                             }else {
                                 Toast.makeText(getActivity(), "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
                             }
@@ -304,7 +301,7 @@ public class NewsFragment extends Fragment implements
                         @Override
                         public void run() {
                             closeProgressDialog();
-                            Toast.makeText(getActivity(), "加载失败...", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(recyclerView, "更新了" + "加载失败", Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -500,22 +497,4 @@ public class NewsFragment extends Fragment implements
         fragment.setArguments(bundle);
         return fragment;
     }
-
-    private class MyImageViewAsyncTack extends AsyncTask<String, Integer, Bitmap>{
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            String url = params[0];
-            Bitmap bitmap = HttpUnit.getOneImageBitmap(url);
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-          if(bitmap != null){
-
-          }
-        }
-    }
-
 }

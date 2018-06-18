@@ -81,18 +81,15 @@ public class DataListAdapter extends ArrayAdapter<Data>{
                 viewHolder.dataImageView.setImageBitmap(bitmap2);
             }else {
                 new AsyncTask<String, Integer, Bitmap>() {
-
                     private String url;
-
                     @Override
                     protected Bitmap doInBackground(String... params) {
                         url = params[0];
                         Bitmap bitmap = HttpUnit.getOneImageBitmap(url);
-                        Bitmap newBitmap = Unitity.scaleImage(bitmap, 500, 350);
-                        if(newBitmap != null){
+                        if(bitmap != null){
                             Temp.bitmapUrl.add(url);
-                            treeMapBitmap.put(url, newBitmap);
-                            FileDatabase.saveBitmap(url, newBitmap);
+                            treeMapBitmap.put(url, bitmap);
+                            FileDatabase.saveBitmap(url, bitmap);
                         }
                         return bitmap;
                     }

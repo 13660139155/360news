@@ -89,67 +89,6 @@ public class NewsDataActivity extends AppCompatActivity implements View.OnClickL
         showNews(data);
     }
 
-//    /**
-//     * 加载菜单选项
-//     * @param menu
-//     * @return
-//     */
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.news_data_menu, menu);
-//        return true;
-//    }
-//
-//    /**
-//     * 菜单选项的点击事件
-//     * @param item
-//     * @return
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item){
-//        switch(item.getItemId()){
-//            case R.id.item_preserve:
-//                if(data != null && bitmap != null){
-//                    Temp.treeMapBitmap.put(data.getNewsImageUrls().get(0), bitmap);
-//                    insertInSQL("ImageUrl", "imageUrl", data.getNewsImageUrls().get(0));
-//                    FileDatabase.saveBitmap(data.getNewsImageUrls().get(0), bitmap);
-//                }
-//                if(data != null){
-//                    Temp.treeMapData.put(data.getNewsId(), data);
-//                    insertInSQL("NewsId", "newsId", data.getNewsId());
-//                    FileDatabase.saveInFile(data, data.getNewsId());
-//                    Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                break;
-//            case R.id.item_shared:
-//                Intent intent = new Intent(Intent.ACTION_SEND);
-////                String newURl = data.getNewsImageUrls().get(0).replace("/", "");
-////                File file = new File(MyApplication.getContext().getFilesDir(), newURl);
-////                if(file != null && file.exists()) {
-////                    intent.setType("image/*");
-////                    //由文件得到路径
-////                    Uri uri = Uri.fromFile(file);
-////                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-////                }else{
-////                    intent.setType("text/plain");
-////                }
-//                intent.setType("text/plain");
-//                intent.putExtra(Intent.EXTRA_SUBJECT, "我是标题");
-//                intent.putExtra(Intent.EXTRA_TEXT,  data.getNewsTitle() + "\n\n"
-//                                                    + data.getNewsPublishDataStr() + "\n"
-//                                                    + "编辑：" + data.getNewsPublisher() + "\n\n"
-//                                                    + data.getNewsContent()
-//                                                    + data.getNewsUrl());
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                startActivity(Intent.createChooser(intent, "分享到"));
-//                break;
-//            default:
-//                break;
-//        }
-//       return true;
-//    }
-
     @Override
     public void onClick(View v) {
         switch(v.getId()){

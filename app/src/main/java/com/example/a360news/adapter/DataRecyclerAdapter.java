@@ -102,20 +102,17 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ((ViewHolder)holder).dataImageView.setImageBitmap(bitmap1);
             } else{
                 new AsyncTask<String, Integer, Bitmap>() {
-
                     private String url;
-
                     @Override
                     protected Bitmap doInBackground(String... params) {
                         url = params[0];
                         Bitmap bitmap = HttpUnit.getOneImageBitmap(url);
-                        Bitmap bitmap2 = Unitity.scaleImage(bitmap, 500, 350);
                         if(bitmap != null){
                             Temp.bitmapUrl.add(url);
-                            treeMapBitmap.put(url, bitmap2);
-                            FileDatabase.saveBitmap(url, bitmap2);
+                            treeMapBitmap.put(url, bitmap);
+                            FileDatabase.saveBitmap(url, bitmap);
                         }
-                        return bitmap2;
+                        return bitmap;
                     }
 
                     @Override
