@@ -20,6 +20,7 @@ import com.example.a360news.db.FileDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
 import com.example.a360news.unit.HttpUnit;
+import com.example.a360news.unit.ImageLoader;
 import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private RecyclerView recyclerView;
 
+    private ImageLoader imageLoader;
+
     //1,加入布局状态标志-用来判断此时加载是普通Item还是foot view
     private static final int ITEM_TYPE = 0;//普通item
     private static final int FOOTER_TYPE = 1;//footer item
@@ -56,6 +59,7 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public DataRecyclerAdapter(List<Data> list){
         this.dataList = list;
         treeMapBitmap = new TreeMap<>();
+        imageLoader = ImageLoader.getInstance();
     }
 
     //4.接着onCreateViewHolder(ViewGroup parent,int viewType)加载布局的时候根据viewType的类型来选择指定的布局创建，返回即可
@@ -94,7 +98,8 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((ViewHolder)holder).dataImageView.setImageResource(R.drawable.launch);
             //为imageView设置Tag,内容是该imageView等待加载的图片url
             ((ViewHolder)holder).dataImageView.setTag(url);
-            Bitmap bitmap = treeMapBitmap.get(data.getNewsImageUrls().get(0));
+            //Bitmap bitmap = treeMapBitmap.get(data.getNewsImageUrls().get(0));
+            Bitmap bitmap = imageLoader.getBitmapFromMemoryCache(data.getNewsImageUrls().get(0));
             Bitmap bitmap1 = FileDatabase.loadBitmap(data.getNewsImageUrls().get(0));
             if(bitmap != null){
                 ((ViewHolder)holder).dataImageView.setImageBitmap(bitmap);
@@ -109,7 +114,8 @@ public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         Bitmap bitmap = HttpUnit.getOneImageBitmap(url);
                         if(bitmap != null){
                             Temp.bitmapUrl.add(url);
-                            treeMapBitmap.put(url, bitmap);
+                            //treeMapBitmap.put(url, bitmap);
+                            imageLoader.addBitmapToMemoryCache(url, bitmap);
                             FileDatabase.saveBitmap(url, bitmap);
                         }
                         return bitmap;

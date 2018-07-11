@@ -4,7 +4,7 @@ import android.content.Context;
 
 /**
  * dp,sp转换为px工具类
- * ldpi:mdpi:hdpi:xdpi:xxdpi = 3:4:6:8:12
+ * ldpi:mdpi:hdpi:xdpi:xxdpi = 3:4:6:8:12（以mdpi(屏幕密度为160)为标准, 1dp = 1px）
  * Created by ASUS on 2018/6/15.
  */
 

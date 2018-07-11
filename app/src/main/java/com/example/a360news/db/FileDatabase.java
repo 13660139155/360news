@@ -65,6 +65,7 @@ public class FileDatabase {
         FileInputStream fileInputStream;
         try {
             fileInputStream = MyApplication.getContext().openFileInput(newUrl);
+
             bufferedInputStream = new BufferedInputStream(fileInputStream);
             bitmap = BitmapFactory.decodeStream(bufferedInputStream);
         } catch (FileNotFoundException e) {
