@@ -6,18 +6,25 @@
 
     <include layout="@layout/news_list_header_layout"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout_list"
+    <RelativeLayout
+        android:id="@+id/relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg"
-        android:scrollbars="vertical">
+        android:layout_height="wrap_content">
 
-        <ListView
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg"
+            android:scrollbars="vertical">
+
+            <ListView
                 android:id="@+id/list_view_newsList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

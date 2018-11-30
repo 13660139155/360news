@@ -2,4 +2,6 @@
     <string name="app_name">洋葱新闻</string>
     <string name="appwidget_text">收藏夹</string>
     <string name="add_widget">Add widget</string>
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
 </resources>

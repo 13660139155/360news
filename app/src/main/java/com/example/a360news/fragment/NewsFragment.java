@@ -1,17 +1,9 @@
-package com.example.a360news.Fragment;
+package com.example.a360news.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.a360news.MainActivity;
-import com.example.a360news.MyApplication;
 import com.example.a360news.R;
 import com.example.a360news.db.SPFDatabase;
 import com.example.a360news.json.Data;
@@ -28,11 +19,20 @@ import com.example.a360news.adapter.DataRecyclerAdapter;
 import com.example.a360news.interfance.HttpCallBackListener;
 import com.example.a360news.unit.HttpUnit;
 import com.example.a360news.unit.JSONUnit;
+import com.example.a360news.unit.Unitity;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * 新闻主页面碎片
@@ -48,6 +48,7 @@ public class NewsFragment extends Fragment implements
     DataRecyclerAdapter dataRecyclerAdapter;//新闻列表的适配器
     ArrayList<Data> dataList;//新闻数据集合
     LinearLayoutManager linearLayoutManager;//RecyclerView的方向管理
+    CoordinatorLayout coordinatorLayout;
 
     private ProgressDialog progressDialog;
     private int lastVisibleItem;//新闻列表的最后一项
@@ -58,14 +59,16 @@ public class NewsFragment extends Fragment implements
     private boolean IS_LOAD = false;//View是否加载
     private View view;
 
+    @SuppressLint("ResourceAsColor")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.news_frag, container, false);
 
-        recyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_dataList_frag);
+        recyclerView = view.findViewById(R.id.recycler_view_dataList_frag);
         dataList = new ArrayList<>();
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        coordinatorLayout = view.findViewById(R.id.news_frag);
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorPrimary);
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -76,7 +79,7 @@ public class NewsFragment extends Fragment implements
         }
 
         /** 用recyclerview实现上拉加载功能 */
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener(){
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -177,7 +180,7 @@ public class NewsFragment extends Fragment implements
                                 dataRecyclerAdapter.notifyDataSetChanged();
                             }
                             swipeRefreshLayout.setRefreshing(false);
-                            Snackbar.make(recyclerView, "更新了" + dataList3.size() + "条新闻", Snackbar.LENGTH_SHORT).show();
+                            Unitity.toastMake(getActivity(), coordinatorLayout, "更新了" + dataList3.size() + "条新闻");
                         }
                     });
                 }
@@ -227,7 +230,7 @@ public class NewsFragment extends Fragment implements
                             dataRecyclerAdapter.notifyDataSetChanged();
                         }
                         swipeRefreshLayout.setRefreshing(false);
-                        Snackbar.make(recyclerView, "更新了" + dataList3.size() + "条新闻", Snackbar.LENGTH_SHORT).show();
+                        Unitity.toastMake(getActivity(), coordinatorLayout, "更新了" + dataList3.size() + "条新闻");
                     }
                 });
             }
@@ -250,6 +253,7 @@ public class NewsFragment extends Fragment implements
     /**
      * 从本地缓存新闻
      */
+    @SuppressLint("WrongConstant")
     public void showNewsFormDatabase(List<Data> datas){
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -282,7 +286,7 @@ public class NewsFragment extends Fragment implements
                             if(dataList.size() != 0){
                                 dataRecyclerAdapter.addItem(dataList);
                                 dataRecyclerAdapter.notifyDataSetChanged();
-                                Snackbar.make(recyclerView, "发现了" + dataList.size() + "条新闻", Snackbar.LENGTH_SHORT);
+                                Unitity.toastMake(getActivity(), coordinatorLayout, "发现了" + dataList.size() + "条新闻");
                             }else {
                                 Toast.makeText(getActivity(), "请求太频繁,稍后再试", Toast.LENGTH_SHORT).show();
                             }

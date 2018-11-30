@@ -3,8 +3,6 @@ package com.example.a360news.db;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.BoolRes;
-import android.support.annotation.Nullable;
 
 import com.example.a360news.MyApplication;
 import com.example.a360news.json.Data;
@@ -19,8 +17,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
-
-import static android.os.Environment.getExternalStorageDirectory;
 
 /**
  * Created by asus on 2018/4/25.

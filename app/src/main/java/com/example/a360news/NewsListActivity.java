@@ -2,10 +2,11 @@ package com.example.a360news;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.a360news.json.Data;
@@ -24,6 +26,7 @@ import com.example.a360news.adapter.DataListAdapter;
 import com.example.a360news.interfance.HttpCallBackListener;
 import com.example.a360news.unit.HttpUnit;
 import com.example.a360news.unit.JSONUnit;
+import com.example.a360news.unit.Unitity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -48,6 +51,7 @@ public class NewsListActivity extends AppCompatActivity
     EditText editText3;
     ImageView imageViewdelete3;
     ListView listView;
+    RelativeLayout relativeLayout;
     SwipeRefreshLayout swipeRefreshLayout;
     Boolean isLoading = false;//表示是否正处于加载状态
 
@@ -58,12 +62,13 @@ public class NewsListActivity extends AppCompatActivity
 
         loadmoreView = LayoutInflater.from(NewsListActivity.this).inflate(R.layout.footer_view_layout, null);//获得刷新视图
         loadmoreView.setVisibility(View.GONE);//默认情况下不可见
-        toolbarList = (Toolbar)findViewById(R.id.tool_bar3);
-        imageBack = (ImageView)findViewById(R.id.image_view_back);
-        editText3 = (EditText)findViewById(R.id.edit_view_edit3);
-        imageSearch = (ImageView)findViewById(R.id.image_view_image_search3);
-        listView = (ListView)findViewById(R.id.list_view_newsList);
-        imageViewdelete3 = (ImageView)findViewById(R.id.image_view_delete3);
+        toolbarList = findViewById(R.id.tool_bar3);
+        imageBack = findViewById(R.id.image_view_back);
+        editText3 = findViewById(R.id.edit_view_edit3);
+        imageSearch = findViewById(R.id.image_view_image_search3);
+        listView = findViewById(R.id.list_view_newsList);
+        imageViewdelete3 = findViewById(R.id.image_view_delete3);
+        relativeLayout = findViewById(R.id.relative_layout);
         imageBack.setOnClickListener(this);
         imageSearch.setOnClickListener(this);
         imageViewdelete3.setOnClickListener(this);
@@ -71,7 +76,7 @@ public class NewsListActivity extends AppCompatActivity
         setSupportActionBar(toolbarList);
 
         intent = getIntent();
-         String key = intent.getStringExtra("keyWord");
+        String key = intent.getStringExtra("keyWord");
         editText3.setText(key.toString());
         /** 移动光标到后面 */
         Editable able = editText3.getText();
@@ -81,7 +86,7 @@ public class NewsListActivity extends AppCompatActivity
         setSearchVerticalDataList(key);
 
         listView.setOnItemClickListener(this);
-        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh_layout_list);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout_list);
         swipeRefreshLayout.setColorSchemeColors(R.color.colorPrimary, R.color.colorAccent, R.color.colorPrimaryDark, R.color.colorPrimary);
         swipeRefreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -109,7 +114,7 @@ public class NewsListActivity extends AppCompatActivity
                                     dataAdapter = new DataListAdapter(NewsListActivity.this, R.layout.data_item_layout, dataList);
                                     listView.addFooterView(loadmoreView,null,false);//加入刷新布局
                                     listView.setAdapter(dataAdapter);
-                                    Toast.makeText(NewsListActivity.this, "发现了" + dataList.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                    Unitity.toastMake(NewsListActivity.this, relativeLayout, "发现了" + dataList.size() + "条新闻");
                                 }else {
                                     Toast.makeText(NewsListActivity.this, "加载失败,换个关键词再试试", Toast.LENGTH_SHORT).show();
                                 }
@@ -159,8 +164,8 @@ public class NewsListActivity extends AppCompatActivity
                                     }
                                 }
                                 swipeRefreshLayout.setRefreshing(false);
-                                Toast.makeText(NewsListActivity.this, "更新了" + dataList1.size() + "条新闻", Toast.LENGTH_SHORT).show();
-                            }
+                                Unitity.toastMake(NewsListActivity.this, relativeLayout, "更新了" + dataList1.size() + "条新闻");
+                                        }
                         });
                     }
                     @Override
@@ -224,11 +229,6 @@ public class NewsListActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                try {
-                                    Thread.sleep(2000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
                                 ArrayList<Data> dataList1 = JSONUnit.praseNewsResponse(response);
                                 if(dataList1.size() != 0){
                                     if(dataList.size() != 0){
@@ -241,7 +241,7 @@ public class NewsListActivity extends AppCompatActivity
                                     }
                                 }
                                 loadComplete();//刷新结束
-                                Toast.makeText(NewsListActivity.this, "更新了" + dataList1.size() + "条新闻", Toast.LENGTH_SHORT).show();
+                                Unitity.toastMake(NewsListActivity.this, relativeLayout, "更新了" + dataList1.size() + "条新闻");
                             }
                         });
                     }

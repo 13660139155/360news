@@ -1,14 +1,12 @@
 package com.example.a360news;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -23,6 +21,10 @@ import com.example.a360news.adapter.FavoriteAdapter;
 import java.util.ArrayList;
 import java.util.Map;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class FavoriteActivity extends AppCompatActivity implements View.OnClickListener{
 
     ImageView imageViewBack;
@@ -34,15 +36,16 @@ public class FavoriteActivity extends AppCompatActivity implements View.OnClickL
     SQLDatabase sqlDatabase;
     TextView textViewHasFavorite;
 
+    @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
-        imageViewBack = (ImageView)findViewById(R.id.image_view_back_fav);
-        textViewCompile = (TextView)findViewById(R.id.text_view_compile);
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view_favorite);
-        relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout_delete);
-        textViewHasFavorite = (TextView)findViewById(R.id.text_has_favorite);
+        imageViewBack = findViewById(R.id.image_view_back_fav);
+        textViewCompile = findViewById(R.id.text_view_compile);
+        recyclerView = findViewById(R.id.recycler_view_favorite);
+        relativeLayout = findViewById(R.id.relative_layout_delete);
+        textViewHasFavorite = findViewById(R.id.text_has_favorite);
         imageViewBack.setOnClickListener(this);
         textViewCompile.setOnClickListener(this);
         textViewCompile.setTag(false);

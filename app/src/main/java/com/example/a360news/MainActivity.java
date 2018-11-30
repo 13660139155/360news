@@ -6,16 +6,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.fragment.app.Fragment;
+import androidx.core.view.GravityCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -23,9 +25,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.a360news.Fragment.NewsFragment;
+import com.example.a360news.fragment.NewsFragment;
 import com.example.a360news.adapter.FragmentAdapter;
 
 import java.io.UnsupportedEncodingException;
@@ -55,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     ImageView imageViewDelete;//输入框内的删除键
     ViewPager viewPager;
     TabLayout tabLayout;
+    LinearLayout llNavHeader;
 
     @Override
     protected void onDestroy() {
@@ -71,15 +75,16 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(networkChangeReceiver, intentFilter);
         setContentView(R.layout.activity_main);
 
-        toolbarMain = (Toolbar)findViewById(R.id.tool_bar1);
-        drawerLayout = (DrawerLayout)findViewById(R.id.draw_layout);
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);
-        editText = (EditText)findViewById(R.id.edit_view_edit);
-        navEditText = (EditText)findViewById(R.id.edit_view_edit2);
-        navSearch = (ImageView)findViewById(R.id.image_view_image_search2);
-        imageViewDelete = (ImageView)findViewById(R.id.image_view_delete2);
-        viewPager = (ViewPager)findViewById(R.id.view_pager);
-        tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+        toolbarMain = findViewById(R.id.tool_bar1);
+        drawerLayout = findViewById(R.id.draw_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        editText = findViewById(R.id.edit_view_edit);
+        llNavHeader = (LinearLayout) navigationView.getHeaderView(0);
+        navEditText = llNavHeader.findViewById(R.id.edit_view_edit2);
+        navSearch = llNavHeader.findViewById(R.id.image_view_image_search2);
+        imageViewDelete = llNavHeader.findViewById(R.id.image_view_delete2);
+        viewPager = findViewById(R.id.view_pager);
+        tabLayout = findViewById(R.id.tab_layout);
 
         editText.setOnClickListener(this);
         navSearch.setOnClickListener(this);
@@ -90,7 +95,8 @@ public class MainActivity extends AppCompatActivity
         actionBar = getSupportActionBar();
         if(actionBar != null){
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.atm);
+            actionBar.setHomeButtonEnabled(true);
+            //actionBar.setHomeAsUpIndicator(R.drawable.atm);
         }
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -105,11 +111,40 @@ public class MainActivity extends AppCompatActivity
         fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), fragmentArrayList, titleArrayList);
         viewPager.setAdapter(fragmentAdapter);
         tabLayout.setupWithViewPager(viewPager);//将TabLayout和ViewPager关联起来
-        tabLayout.setTabsFromPagerAdapter(fragmentAdapter);//给Tabs设置适配器
         //MODE_SCROLLABLE可滑动的展示
         //MODE_FIXED固定展示
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         viewPager.setOffscreenPageLimit(15);//预加载页数
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbarMain, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                //获取mDrawerLayout中的第一个子布局，也就是布局中的RelativeLayout
+                //获取抽屉的view
+                View mContent = drawerLayout.getChildAt(0);
+                float scale = 1 - slideOffset;
+                float endScale = 0.8f + scale * 0.2f;
+                float startScale = 1 - 0.3f * scale;
+
+                //设置左边菜单滑动后的占据屏幕大小
+                drawerView.setScaleX(startScale);
+                drawerView.setScaleY(startScale);
+                //设置菜单透明度
+                drawerView.setAlpha(0.6f + 0.4f * (1 - scale));
+
+                //设置内容界面水平和垂直方向偏转量
+        //在滑动时内容界面的宽度为 屏幕宽度减去菜单界面所占宽度
+        mContent.setTranslationX(drawerView.getMeasuredWidth() * (1 - scale));
+        //设置内容界面操作无效（比如有button就会点击无效）
+        mContent.invalidate();
+        //设置右边菜单滑动后的占据屏幕大小
+        mContent.setScaleX(endScale);
+        mContent.setScaleY(endScale);
+    }
+};
+        toggle.syncState();
+        drawerLayout.addDrawerListener(toggle);
     }
 
     /**

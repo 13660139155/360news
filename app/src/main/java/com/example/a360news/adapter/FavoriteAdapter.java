@@ -2,7 +2,6 @@ package com.example.a360news.adapter;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,11 @@ import com.example.a360news.db.FileDatabase;
 import com.example.a360news.db.SQLDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
-import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 收藏夹的适配器

@@ -1,12 +1,21 @@
 package com.example.a360news.unit;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
-import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 一些工具
@@ -97,5 +106,48 @@ public class Unitity extends AppCompatActivity {
         }
         origin.recycle();
         return newBM;
+    }
+
+    /**
+     * 下弹式提示框
+     * @param viewGroup 父布局
+     * @param s  要提示的内容
+     */
+    public static void toastMake(Context context, final ViewGroup viewGroup,  String s){
+        final TextView textView = new TextView(context);
+        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textView.setText(s);
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(Color.WHITE);
+        textView.setBackgroundColor(0xb8fba21c);
+        viewGroup.addView(textView);
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator translationY1 = ObjectAnimator.ofFloat(textView, "translationY",  -65f, 0f);
+        ObjectAnimator translationY2 = ObjectAnimator.ofFloat(textView, "translationY", 0f, -65);
+        translationY2.setStartDelay(2500);
+        animatorSet.playSequentially(translationY1, translationY2);
+        animatorSet.start();
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                viewGroup.removeView(textView);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 }

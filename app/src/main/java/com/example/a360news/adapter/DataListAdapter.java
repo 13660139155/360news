@@ -1,19 +1,19 @@
 package com.example.a360news.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.LruCache;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.LruCache;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.a360news.R;
@@ -21,7 +21,6 @@ import com.example.a360news.db.FileDatabase;
 import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
 import com.example.a360news.unit.HttpUnit;
-import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,7 @@ public class DataListAdapter extends ArrayAdapter<Data>{
         treeMapBitmap = new TreeMap<>();
     }
 
+    @SuppressLint("StaticFieldLeak")
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -59,10 +59,10 @@ public class DataListAdapter extends ArrayAdapter<Data>{
             if(convertView == null){
                 view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
                 viewHolder = new MyViewHolder();
-                viewHolder.dataTextView = (TextView)view.findViewById(R.id.text_view_title);
-                viewHolder.editorTextView = (TextView)view.findViewById(R.id.text_view_editor);
-                viewHolder.viewTextView = (TextView)view.findViewById(R.id.text_view_viewCount);
-                viewHolder.dataImageView = (ImageView) view.findViewById(R.id.image_view_news_image);
+                viewHolder.dataTextView = view.findViewById(R.id.text_view_title);
+                viewHolder.editorTextView = view.findViewById(R.id.text_view_editor);
+                viewHolder.viewTextView = view.findViewById(R.id.text_view_viewCount);
+                viewHolder.dataImageView = view.findViewById(R.id.image_view_news_image);
                 view.setTag(viewHolder);
             }else{
                 view = convertView;

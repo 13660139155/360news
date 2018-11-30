@@ -2,10 +2,6 @@ package com.example.a360news.adapter;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v4.util.LruCache;
-import android.support.v7.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.a360news.MyApplication;
 import com.example.a360news.NewsDataActivity;
 import com.example.a360news.R;
 import com.example.a360news.db.FileDatabase;
@@ -21,12 +16,12 @@ import com.example.a360news.json.Data;
 import com.example.a360news.keep.Temp;
 import com.example.a360news.unit.HttpUnit;
 import com.example.a360news.unit.ImageLoader;
-import com.example.a360news.unit.Unitity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 新闻列表的RecyclerView的Adapter
@@ -36,7 +31,7 @@ import java.util.TreeMap;
 //上拉加载动画
 public class DataRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Data> dataList = new ArrayList<>();
+    private List<Data> dataList;
 
     private TreeMap<String, Bitmap> treeMapBitmap;
 

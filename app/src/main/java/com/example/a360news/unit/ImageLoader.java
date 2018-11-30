@@ -1,7 +1,10 @@
 package com.example.a360news.unit;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.util.LruCache;
+
+import java.io.InputStream;
+
+import androidx.collection.LruCache;
 
 /**
  * 图片工具类
@@ -86,17 +89,21 @@ public class ImageLoader {
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(String pathName,
-                                                         int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromResource(Object pathName,
+                                                         int reqWidth, int reqHeight, int tag) {
         // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(pathName, options);
+        if(tag == 1){
+            BitmapFactory.decodeFile((String)pathName, options);
+        }else {
+            BitmapFactory.decodeStream((InputStream)pathName, null, options);
+        }
         // 调用上面定义的方法计算inSampleSize值
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         // 使用获取到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(pathName, options);
+        return tag == 1 ? BitmapFactory.decodeFile((String)pathName, options) :  BitmapFactory.decodeStream((InputStream)pathName, null, options);
     }
 
 }

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/tool_bar2"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -52,7 +51,7 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
