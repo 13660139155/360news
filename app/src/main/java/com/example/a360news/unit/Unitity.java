@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * Created by asus on 2018/4/25.
  */
 
-public class Unitity extends AppCompatActivity {
+public class Unitity{
 
     private static ProgressDialog progressDialog;
 
@@ -77,17 +77,16 @@ public class Unitity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap newbm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix,true);
-//        if (bm != null & !bm.isRecycled()){
-//            bm.recycle();//销毁原图片
-//            bm = null;
-//        }
+        if (bm != null & !bm.isRecycled()){
+            bm.recycle();//销毁原图片
+            bm = null;
+        }
         return newbm;
     }
 
 
     /**
      * 按比例缩放图片
-     *
      * @param origin 原图
      * @param ratio  比例
      * @return 新的bitmap

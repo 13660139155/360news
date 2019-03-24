@@ -17,7 +17,7 @@
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="360"
-            android:windowSoftInputMode="adjustNothing|stateHidden"></activity>
+            android:windowSoftInputMode="adjustNothing|stateHidden" />
 
         <!-- 其中adjustNothing设置不影响activity重新绘制view布局，stateHidden第一次进来隐藏软键盘 -->
         <activity
@@ -43,6 +43,8 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_app_widget_info" />
         </receiver>
+
+        <activity android:name=".mvp.ui.activity.DemoActivity" />
     </application>
 
 </manifest>
