@@ -1,5 +1,5 @@
 # 360news
-## 纯原生打造的一款简易的新闻浏览器，主界面ViewPager + tablayout + DrawerLayout
+### 纯原生打造的一款简易的新闻浏览器，主界面ViewPager + tablayout + DrawerLayout
 ### Preview
 ![news1](/screenshots/news1.gif) <br>
 ![news2](/screenshots/news2.gif) <br>
